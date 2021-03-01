@@ -11,27 +11,28 @@ var authors = [
   "Newton, Isaac, Sir",
 ];
 
-var author_downloads = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+author_name = "bibliography.author.name";
+author_download = "metadata.downloads";
 
-function read_data() {
-  d3.csv("../data/classics.csv", function (data) {
-    if (authors.includes(data["bibliography.author.name"])) {
-      var index = authors.indexOf(data["bibliography.author.name"]);
-      // console.log(index);
-      var down = data["metadata.downloads"];
-      author_downloads[index] += parseInt(down);
-    }
-  });
-}
+//d3 nesting => d3 groups
+author_downloads = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+d3.csv("../data/classics.csv", function (data) {
+  if (authors.includes(data[author_name])) {
+    var index = authors.indexOf(data[author_name]);
+    // console.log(index);
+    var down = data[author_download];
+    // console.log("Array", author_downloads[index]);
+    author_downloads[index] += +down;
+    // console.log(index, down);
+  }
+}).then(() => {
+  main();
+});
 
 function main() {
-  for (let i = 0; i < author_downloads.length; i++) {
-    console.log(author_downloads[i]);
-  }
-
   var w = 1000;
   var h = 800;
-  var barPadding = 1;
+  var barPadding = 10;
   let svg = d3.select("body").append("svg").attr("width", w).attr("height", h);
 
   var xScale = d3
@@ -63,25 +64,28 @@ function main() {
     .attr("fill", "black")
     .text("Number of Downloads(k)");
 
-  // svg
-  //   .selectAll("rect")
-  //   .data(author_downloads)
-  //   .enter()
-  //   .append("rect")
-  //   .attr("x", function (d, i) {
-  //     return i * (w / author_downloads.length);
-  //   })
-  //   .attr("y", function (d) {
-  //     return h - d * 4;
-  //   })
-  //   .attr("width", w / author_downloads.length - barPadding)
-  //   .attr("height", function (d) {
-  //     return d * 4;
-  //   })
-  //   .attr("fill", function (d) {
-  //     return "rgb(0, 0, " + Math.round(d * 10) + ")";
-  //   });
+  svg
+    .selectAll("rect")
+    .data(author_downloads)
+    .enter()
+    .append("rect")
+    .attr("x", function (d, i) {
+      // return h - i + 50;
+      return 125;
+    })
+    .attr("y", function (d, i) {
+      return i * 45 + 110;
+    })
+    .attr("width", function (d) {
+      //controlled by num downloads
+      return 10;
+    })
+    .attr("height", function (d) {
+      // return w / author_downloads.length - barPadding;
+      return 25;
+    })
+    .attr("fill", function (d) {
+      return "rgb(0, 0, " + Math.round(d * 10) + ")";
+    });
   // console.log(author_downloads);
 }
-read_data();
-main();
