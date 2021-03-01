@@ -19,32 +19,30 @@ author_downloads = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 d3.csv("../data/classics.csv", function (data) {
   if (authors.includes(data[author_name])) {
     var index = authors.indexOf(data[author_name]);
-    // console.log(index);
     var down = data[author_download];
-    // console.log("Array", author_downloads[index]);
     author_downloads[index] += +down;
-    // console.log(index, down);
   }
 }).then(() => {
   main();
 });
 
 function main() {
-  var w = 1000;
-  var h = 800;
-  var barPadding = 10;
+  const w = 1000;
+  const h = 800;
   let svg = d3.select("body").append("svg").attr("width", w).attr("height", h);
 
-  var xScale = d3
+  const xScale = d3
     .scaleLinear()
-    .domain([0, 66])
+    .domain([0, 65])
     .range([75, w - 100]);
-  var yScale = d3
+  const yScale = d3
     .scaleBand()
     .domain(authors)
     .range([100, h - 300]);
-  var yAxis = d3.axisLeft(yScale);
-  var xAxis = d3.axisBottom(xScale).ticks(33);
+  const yAxis = d3.axisLeft(yScale);
+  const xAxis = d3.axisBottom(xScale).ticks(13);
+
+  const barX = 125;
 
   svg.append("g").attr("transform", "translate(125,0)").call(yAxis.tickSize(0));
   svg
@@ -70,22 +68,19 @@ function main() {
     .enter()
     .append("rect")
     .attr("x", function (d, i) {
-      // return h - i + 50;
-      return 125;
+      return barX;
     })
     .attr("y", function (d, i) {
       return i * 45 + 110;
     })
     .attr("width", function (d) {
-      //controlled by num downloads
-      return 10;
+      console.log((d / 10000) * 10);
+      return 10 + (d / 1000) * 12;
     })
     .attr("height", function (d) {
-      // return w / author_downloads.length - barPadding;
       return 25;
     })
-    .attr("fill", function (d) {
-      return "rgb(0, 0, " + Math.round(d * 10) + ")";
+    .attr("fill", function (d, i) {
+      return "rgb(0, 50, 255)";
     });
-  // console.log(author_downloads);
 }
