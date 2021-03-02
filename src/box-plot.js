@@ -29,7 +29,6 @@ function main() {
   const q1 = d3.quantile(downloads, 0.25);
   const median = d3.quantile(downloads, 0.5);
   const q3 = d3.quantile(downloads, 0.75);
-  const inter_quart_range = q3 - q1;
   const min = downloads[downloads.length - 1];
   const max = downloads[0];
 
