@@ -59,6 +59,13 @@ function main() {
     .style("text-anchor", "middle")
     .attr("fill", "black")
     .text("Life Expectancy");
+  svg
+    .append("text")
+    .attr("font-family", "Arial, Helvetica, sans-serif")
+    .attr("transform", "translate(400,70)")
+    .style("text-anchor", "middle")
+    .attr("fill", "black")
+    .text("Life Expectancy, Population, Population Growth as of 2013");
   svg.append("g").attr("transform", "translate(75,65)").call(yAxis);
   svg
     .append("text")
