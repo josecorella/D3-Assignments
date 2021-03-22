@@ -49,8 +49,6 @@ function main() {
 
   const barX = 125;
 
-  var height = 300;
-
   var colorScale = d3
     .scaleSequential()
     .interpolator(d3.interpolateGnBu)
@@ -98,6 +96,7 @@ function main() {
       return 25;
     })
     .attr("fill", (d, i) => colorScale(d));
+
   svg
     .append("g")
     .attr("transform", "translate(1000,100)")
