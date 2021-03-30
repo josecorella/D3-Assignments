@@ -2,19 +2,22 @@
 let margin = { top: 20, right: 30, bottom: 120, left: 40 };
 const width = 1000 - margin.left - margin.right;
 const height = 1000 - margin.top - margin.bottom;
+var connections = [];
 
-//load data
 d3.csv("../data/soc-firm-hi-tech.csv", function (d) {
-  return {
+  connections.push({
     source: +d.source,
     target: +d.target,
-  };
-}).then(function (connect) {
-  //data
+  });
+}).then(() => {
+  main();
+});
+
+function main() {
   var nodes = [];
   var links = [];
 
-  connect.forEach(function (data) {
+  connections.forEach(function (data) {
     links.push({ source: data.source });
   });
 
@@ -24,10 +27,15 @@ d3.csv("../data/soc-firm-hi-tech.csv", function (d) {
     };
   });
 
-  //color scale
-  let colorScale = d3.scaleOrdinal(d3.schemeDark2);
+  let colorScale = d3
+    .scaleOrdinal(d3.schemeDark2)
+    .domain([d3.min(nodes), d3.max(nodes)]);
+  var legend = d3
+    .legendColor()
+    .title("Color Legend")
+    .titleWidth(100)
+    .scale(colorScale);
 
-  //force simulation
   let simulation = d3
     .forceSimulation()
     .force("charge", d3.forceManyBody().strength(-600))
@@ -39,7 +47,6 @@ d3.csv("../data/soc-firm-hi-tech.csv", function (d) {
       })
     );
 
-  //canvas
   let svg = d3
     .select("body")
     .append("svg")
@@ -47,12 +54,22 @@ d3.csv("../data/soc-firm-hi-tech.csv", function (d) {
     .attr("height", 200 + width + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  svg
+    .append("text")
+    .attr("font-family", "Arial, Helvetica, sans-serif")
+    .attr("x", width / 2)
+    .attr("y", 50)
+    .attr("dy", "1em")
+    .style("text-anchor", "middle")
+    .style("font", "25px")
+    .attr("fill", "black")
+    .text("Force Directed Layout Node Link Diagram");
 
   var link = svg
     .append("g")
     .attr("class", "links")
     .selectAll("line")
-    .data(connect)
+    .data(connections)
     .enter()
     .append("line")
     .attr("stroke", "black");
@@ -77,13 +94,16 @@ d3.csv("../data/soc-firm-hi-tech.csv", function (d) {
     })
     .style("stroke-width", 2)
     .style("stroke", "black");
+  // svg
+  //   .append("g")
+  //   .attr("transform", "translate(1000,100)")
+  //   .attr("font-family", "Arial, Helvetica, sans-serif")
+  //   .call(legend);
 
-  //simulation2
   simulation.nodes(nodes).on("tick", ticked);
 
-  simulation.force("link").links(connect);
+  simulation.force("link").links(connections);
 
-  //ticked
   function ticked() {
     link
       .attr("x1", function (d) {
@@ -100,7 +120,7 @@ d3.csv("../data/soc-firm-hi-tech.csv", function (d) {
       });
 
     node
-      .attr("r", 15)
+      .attr("r", 8)
       .attr("cx", function (d) {
         return d.x;
       })
@@ -109,9 +129,10 @@ d3.csv("../data/soc-firm-hi-tech.csv", function (d) {
       });
   }
 
-  //drag
   function dragstarted(event, d) {
-    if (!event.active) simulation.alphaTarget(0.2).restart();
+    if (!event.active) {
+      simulation.alphaTarget(0.2).restart();
+    }
     d.fx = d.x;
     d.fy = d.y;
   }
@@ -128,4 +149,4 @@ d3.csv("../data/soc-firm-hi-tech.csv", function (d) {
     d.fx = null;
     d.fy = null;
   }
-});
+}
