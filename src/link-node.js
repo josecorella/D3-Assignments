@@ -1,13 +1,12 @@
-//constants
 let margin = { top: 20, right: 30, bottom: 120, left: 40 };
 const width = 1000 - margin.left - margin.right;
 const height = 1000 - margin.top - margin.bottom;
 var connections = [];
 
-d3.csv("../data/soc-firm-hi-tech.csv", function (d) {
+d3.csv("../data/soc-firm-hi-tech.csv", function (data) {
   connections.push({
-    source: +d.source,
-    target: +d.target,
+    source: +data.source,
+    target: +data.target,
   });
 }).then(() => {
   main();
