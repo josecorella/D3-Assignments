@@ -122,7 +122,6 @@ d3.tsv("../data/data.tsv", function (d) {
     .enter()
     .append("svg")
     .attr("class", "city")
-    .attr("font-family", "Arial, Helvetica, sans-serif")
     .attr("width", width - margin.right);
 
   function hover(elem) {
