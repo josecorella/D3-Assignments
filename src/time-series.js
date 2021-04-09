@@ -6,13 +6,13 @@ let svg = d3
   .attr("width", width)
   .attr("height", h);
 
-var svg = d3.select("svg"),
-  margin = { top: 20, right: 80, bottom: 30, left: 50 },
-  width = svg.attr("width") - margin.left - margin.right,
-  height = svg.attr("height") - margin.top - margin.bottom,
-  g = svg
+d3.select("svg"),
+  (margin = { top: 20, right: 80, bottom: 30, left: 50 }),
+  (width = svg.attr("width") - margin.left - margin.right),
+  (height = svg.attr("height") - margin.top - margin.bottom),
+  (g = svg
     .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")"));
 
 var parseTime = d3.timeParse("%Y%m%d");
 
@@ -41,7 +41,7 @@ var line = d3
     return y(d.temperature);
   });
 
-d3.tsv("data.tsv", function (d) {
+d3.tsv("../data/data.tsv", function (d) {
   return d;
 }).then(function (data) {
   let columns = ["date", "New York", "San Francisco", "Austin"];
@@ -112,6 +112,17 @@ d3.tsv("data.tsv", function (d) {
 
   function hover(elem) {
     // Add code here for 'hover'
+    var attrs = elem.srcElement.attributes;
+    let id = attrs["data-id"].value;
+    let path = city.select("#" + id);
+    if (path.attr("visibility") == "hidden") {
+      return;
+    }
+    //similar to the exit code here if we hover it will turn grey
+    city.selectAll(".line").style("stroke", "grey");
+    path.style("stroke", (d) => {
+      return z(d.id);
+    });
   }
 
   function exit(elem) {
@@ -128,6 +139,21 @@ d3.tsv("data.tsv", function (d) {
 
   function click(elem) {
     // Add code here for 'click'
+    var attrs = elem.srcElement.attributes;
+    let id = attrs["data-id"].value;
+    let path = city.select("#" + id);
+
+    //check if the path attribute is hidden
+    if (path.attr("visibility") == "hidden") {
+      //set it to visible
+      path.attr("visibility", "visible");
+      return;
+    }
+    //if it is not hidden hide them and style the id for that line
+    path.attr("visibility", "hidden");
+    city.selectAll(".line").style("stroke", (d) => {
+      return z(d.id);
+    });
   }
 
   const xAxis = (g, x) =>
@@ -139,6 +165,11 @@ d3.tsv("data.tsv", function (d) {
     );
 
   function zoomed(event) {
+    var new_x = event.transform.rescaleX(x);
+    city.selectAll(".line").attr("d", function (d) {
+      return makeLine(new_x)(d.values);
+    });
+    x_axis.call(xAxis, new_x);
     // Add code here for zooming
   }
 
