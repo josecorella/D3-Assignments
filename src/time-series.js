@@ -7,7 +7,7 @@ let svg = d3
   .attr("height", h);
 
 d3.select("svg"),
-  (margin = { top: 20, right: 80, bottom: 30, left: 50 }),
+  (margin = { top: 50, right: 80, bottom: 40, left: 50 }),
   (width = svg.attr("width") - margin.left - margin.right),
   (height = svg.attr("height") - margin.top - margin.bottom),
   (g = svg
@@ -91,6 +91,20 @@ d3.tsv("../data/data.tsv", function (d) {
     .attr("id", "x_axis")
     .attr("transform", "translate(0," + height + ")")
     .call(d3.axisBottom(x));
+  svg
+    .append("text")
+    .attr("font-family", "Arial, Helvetica, sans-serif")
+    .attr("transform", "translate(400," + h + ")")
+    .style("text-anchor", "middle")
+    .attr("fill", "black")
+    .text("Scroll me to Zoom and Pan across the Axis");
+  svg
+    .append("text")
+    .attr("font-family", "Arial, Helvetica, sans-serif")
+    .attr("transform", "translate(400," + margin.top + ")")
+    .style("text-anchor", "middle")
+    .attr("fill", "black")
+    .text("Hover over the city name to Brush and click the name to Filter out");
 
   g.append("g")
     .attr("class", "axis axis--y")
@@ -108,6 +122,7 @@ d3.tsv("../data/data.tsv", function (d) {
     .enter()
     .append("svg")
     .attr("class", "city")
+    .attr("font-family", "Arial, Helvetica, sans-serif")
     .attr("width", width - margin.right);
 
   function hover(elem) {
@@ -228,5 +243,7 @@ d3.tsv("../data/data.tsv", function (d) {
     .text(function (d) {
       return d.id;
     })
+    .on("mouseover", hover)
+    .on("click", click)
     .on("mouseout", exit);
 });
