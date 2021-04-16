@@ -2,7 +2,8 @@ var svg = d3.select("svg"),
   width = +svg.attr("width"),
   height = +svg.attr("height");
 
-var unemployment = new Map();
+var migration = new Map();
+var county_names = new Map();
 
 var path = d3.geoPath();
 
@@ -47,7 +48,7 @@ g.append("text")
   .attr("fill", "#000")
   .attr("text-anchor", "start")
   .attr("font-weight", "bold")
-  .text("Unemployment rate");
+  .text("Migration Rate");
 
 g.call(
   d3
@@ -63,14 +64,22 @@ g.call(
 
 var promises = [
   d3.json("https://d3js.org/us-10m.v1.json"),
-  d3.tsv("data/unemployment.tsv", function (d) {
-    unemployment.set(d.id, +d.rate);
+  d3.csv("../data/net_migration.csv", function (d) {
+    migration.set(d.code, +d.net_migration);
+    county_names.set(d.code, d.county_name);
   }),
 ];
 
 Promise.all(promises).then(ready);
 
 function ready([us]) {
+  svg
+    .append("text")
+    .attr("font-family", "Arial, Helvetica, sans-serif")
+    .attr("transform", "translate(450,30)")
+    .style("text-anchor", "middle")
+    .attr("fill", "black")
+    .text("2019 Migration Rate per US County");
   svg
     .append("g")
     .attr("class", "counties")
@@ -79,12 +88,13 @@ function ready([us]) {
     .enter()
     .append("path")
     .attr("fill", function (d) {
-      return color((d.rate = unemployment.get(d.id)));
+      console.log(migration.get(d.id));
+      return color(migration.get(d.id));
     })
     .attr("d", path)
     .append("title")
     .text(function (d) {
-      return d.rate + "%";
+      return county_names.get(d.id) + "\n" + migration.get(d.id) + "%";
     });
 
   svg

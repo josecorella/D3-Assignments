@@ -45,7 +45,7 @@ function main() {
   svg
     .append("text")
     .attr("font-family", "Arial, Helvetica, sans-serif")
-    .attr("transform", "translate(400,70)")
+    .attr("transform", "translate(475,70)")
     .style("text-anchor", "middle")
     .attr("fill", "black")
     .text("Cellular Subscriptions from 1960 - 2013");
