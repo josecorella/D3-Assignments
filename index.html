@@ -3,19 +3,21 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
         <style>
-            .counties {
-                fill: none;
+            .states {
+                fill: rgb(204, 204, 204);
+                stroke: #fff;
             }
         
-            .states {
-                fill: none;
+            .symbol {
+                fill: steelblue;
+                fill-opacity: .8;
                 stroke: #fff;
-                stroke-linejoin: round;
             }
         </style>
-        <svg width="960" height="600"></svg>
-        <script src="https://d3js.org/d3.v6.min.js"></script>
-        <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-        <script src="https://d3js.org/topojson.v2.min.js"></script>
-        <script src="src/chloropleth.js"></script>
+        <body>
+            <script src="https://d3js.org/d3.v3.min.js"></script>
+            <script src="https://d3js.org/topojson.v1.min.js"></script>
+            <script src="https://d3js.org/queue.v1.min.js"></script>
+            <script src="src/proportional-symbols.js"></script>
+        </body>
 </html>
