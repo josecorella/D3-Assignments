@@ -10,6 +10,13 @@ var svg = d3
   .append("svg")
   .attr("width", width)
   .attr("height", height);
+svg
+  .append("text")
+  .attr("font-family", "Arial, Helvetica, sans-serif")
+  .attr("transform", "translate(450,30)")
+  .style("text-anchor", "middle")
+  .attr("fill", "black")
+  .text("Population per State vs Expensive States");
 
 queue()
   .defer(d3.json, "../data/us-all.json")
@@ -40,15 +47,27 @@ function ready(error, us, centroid) {
       path.pointRadius(function (d) {
         return radius(d.properties.population);
       })
-    );
-
-  svg
-    .selectAll("path")
-    .data(us.objects.states)
-    .enter()
-    .append("path")
-    .attr("d", path)
+    )
     .style("fill", function (d) {
-      console.log(d);
+      if (d.properties.hasOwnProperty("cost")) {
+        return "rgb(0, 224, 37)";
+      }
+    })
+    .append("title")
+    .text(function (d) {
+      if (d.properties.population < min_pop) {
+        min_pop = d.properties.population;
+      }
+      if (d.properties.population > max_pop) {
+        max_pop = d.properties.population;
+      }
+
+      nfObject = new Intl.NumberFormat("en-US");
+      return (
+        d.properties.name +
+        "\n" +
+        "Population: " +
+        nfObject.format(d.properties.population)
+      );
     });
 }
