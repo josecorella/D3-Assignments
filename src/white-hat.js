@@ -1,0 +1,80 @@
+var svg = d3.select("svg"),
+  width = +svg.attr("width"),
+  height = +svg.attr("height");
+
+var pollution = new Map();
+var pollution_values = [];
+var pollutant_countries = [];
+
+var promises = [
+  d3.csv("../data/emissions.csv", function (d) {
+    pollution.set(d.Country, +d.Emissions);
+    pollution_values.push(+d.Emissions);
+    pollutant_countries.push(d.Country);
+  }),
+];
+
+Promise.all(promises).then(ready);
+
+function ready() {
+  console.log(pollution);
+  const barX = 125;
+  const xScale = d3
+    .scaleLinear()
+    .domain([0, Math.max(pollution_values)])
+    .range([75, width - 100]);
+  const yScale = d3
+    .scaleBand()
+    .domain(pollutant_countries)
+    .range([100, height - 100]);
+  const yAxis = d3.axisLeft(yScale);
+  const xAxis = d3.axisBottom(xScale).ticks(pollution_values.length);
+
+  var colorScale = d3
+    .scaleSequential(["red", "orange"])
+    .domain([
+      d3.min(pollution_values) / 1000,
+      d3.max(pollution_values) / 1000000,
+    ]);
+
+  svg.append("g").attr("transform", "translate(125,0)").call(yAxis.tickSize(0));
+  svg
+    .append("text")
+    .attr("font-family", "Arial, Helvetica, sans-serif")
+    .attr("transform", "translate(550,75)")
+    .style("text-anchor", "middle")
+    .attr("fill", "black")
+    .text(
+      "Pollution Levels by Country in 2012\nData: https://corgis-edu.github.io/corgis/csv/emissions/"
+    );
+  svg.append("g").attr("transform", "translate(50,500)").call(xAxis);
+  svg
+    .append("text")
+    .attr("font-family", "Arial, Helvetica, sans-serif")
+    .attr("transform", "translate(550,550)")
+    .style("text-anchor", "middle")
+    .attr("fill", "black")
+    .text("Carbon Dioxide Emissions in kilo tons");
+
+  svg
+    .selectAll("rect")
+    .data(pollution)
+    .enter()
+    .append("rect")
+    .attr("x", function (d, i) {
+      return barX;
+    })
+    .attr("y", function (d, i) {
+      return 50 * i + 110;
+    })
+    .attr("width", function (d) {
+      return 10;
+    })
+    .attr("height", function (d) {
+      return 25;
+    })
+    .attr("fill", function (d, i) {
+      console.log(pollution.get(d[0]));
+      return colorScale(pollution.get(d[0]) / 5000);
+    });
+}

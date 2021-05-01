@@ -73,6 +73,7 @@ var promises = [
 Promise.all(promises).then(ready);
 
 function ready([us]) {
+    console.log(us);
   svg
     .append("text")
     .attr("font-family", "Arial, Helvetica, sans-serif")
@@ -88,7 +89,6 @@ function ready([us]) {
     .enter()
     .append("path")
     .attr("fill", function (d) {
-      console.log(migration.get(d.id));
       return color(migration.get(d.id));
     })
     .attr("d", path)
@@ -97,13 +97,13 @@ function ready([us]) {
       return county_names.get(d.id) + "\n" + migration.get(d.id) + "%";
     });
 
-  svg
-    .append("path")
-    .datum(
-      topojson.mesh(us, us.objects.states, function (a, b) {
-        return a !== b;
-      })
-    )
-    .attr("class", "states")
-    .attr("d", path);
+  // svg
+  //   .append("path")
+  //   .datum(
+  //     topojson.mesh(us, us.objects.states, function (a, b) {
+  //       return a !== b;
+  //     })
+  //   )
+  //   .attr("class", "states")
+  //   .attr("d", path);
 }
