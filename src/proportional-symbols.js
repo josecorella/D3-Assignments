@@ -1,9 +1,11 @@
-var width = 960,
+var width = 1200,
   height = 500;
 
 var radius = d3.scale.sqrt().domain([0, 1e6]).range([0, 10]);
 
 var path = d3.geo.path();
+
+var keys = ["Top 10 Most Expensive States", "US States"];
 
 var svg = d3
   .select("body")
@@ -25,6 +27,40 @@ queue()
 
 function ready(error, us, centroid) {
   if (error) throw error;
+
+  svg
+    .selectAll("mydots")
+    .data(keys)
+    .enter()
+    .append("circle")
+    .attr("cx", 950)
+    .attr("cy", function (d, i) {
+      return 100 + i * 40;
+    }) // 100 is where the first dot appears. 25 is the distance between dots
+    .attr("r", 12)
+    .style("fill", function (d, i) {
+      if (i === 0) {
+        return "rgb(0, 224, 37)";
+      } else {
+        return "rgb(70, 130, 180)";
+      }
+    });
+
+  svg
+    .selectAll("mylabels")
+    .data(keys)
+    .enter()
+    .append("text")
+    .attr("x", 975)
+    .attr("y", function (d, i) {
+      return 100 + i * 45;
+    })
+    .text(function (d) {
+      return d;
+    })
+    .attr("text-anchor", "left")
+    .attr("font-family", "Arial, Helvetica, sans-serif")
+    .style("alignment-baseline", "middle");
 
   svg
     .append("path")
@@ -55,13 +91,6 @@ function ready(error, us, centroid) {
     })
     .append("title")
     .text(function (d) {
-      if (d.properties.population < min_pop) {
-        min_pop = d.properties.population;
-      }
-      if (d.properties.population > max_pop) {
-        max_pop = d.properties.population;
-      }
-
       nfObject = new Intl.NumberFormat("en-US");
       return (
         d.properties.name +
